@@ -586,7 +586,7 @@ class FeatureClient(Client):
 
             # Will raise an exception if not present + keep value in cache
             try:
-                self.ci.get_cvterm_id(type_to_check, 'sequence', True)
+                self.ci.get_cvterm_id(type_to_check, 'sequence', False)
             except chado.RecordNotFoundError:
                 if type_to_check not in self._blacklisted_cvterms:
                     warn("WARNING: will skip features of unknown type: %s", type_to_check)
