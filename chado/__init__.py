@@ -295,7 +295,7 @@ class ChadoInstance(object):
 
             if allow_synonyms:
                 res = res.join(self.model.cvtermsynonym, self.model.cvtermsynonym.cvterm_id == self.model.cvterm.cvterm_id, isouter=True) \
-                    .filter((self.model.cvterm.name == name) | (self.model.cvtermsynonym.synonym == name))
+                    .filter((self.model.cvterm.name == name) | (self.model.cvtermsynonym.name == name))
             else:
                 res = res.filter(self.model.cvterm.name == name)
 
