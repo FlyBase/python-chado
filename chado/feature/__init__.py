@@ -551,7 +551,7 @@ class FeatureClient(Client):
             .filter_by(organism_id=organism_id)
         if landmark_type:
             # Filter by landmark type if provided (else we look for all features)
-            landmark_type_id = self.ci.get_cvterm_id(landmark_type, 'sequence')
+            landmark_type_id = self.ci.get_cvterm_id(landmark_type, 'SO')
             landmarks = landmarks.filter(self.model.feature.type_id == landmark_type_id)
 
         self._landmark_cache = {}
@@ -586,7 +586,7 @@ class FeatureClient(Client):
 
             # Will raise an exception if not present + keep value in cache
             try:
-                self.ci.get_cvterm_id(type_to_check, 'sequence', True)
+                self.ci.get_cvterm_id(type_to_check, 'SO', True)
             except chado.RecordNotFoundError:
                 if type_to_check not in self._blacklisted_cvterms:
                     warn("WARNING: will skip features of unknown type: %s", type_to_check)
@@ -759,7 +759,7 @@ class FeatureClient(Client):
         else:
             f_name = f_uname
 
-        feat_term = self.ci.get_cvterm_id(f.type, 'sequence', True)
+        feat_term = self.ci.get_cvterm_id(f.type, 'SO', True)
 
         # Fill the existing feature cache if not already done
         self._init_feature_cache(organism_id)
@@ -1095,7 +1095,7 @@ class FeatureClient(Client):
 
         if self._featured_dirty_rels:
 
-            partofterm = self.ci.get_cvterm_id('part_of', 'sequence', True)
+            partofterm = self.ci.get_cvterm_id('part_of', 'SO', True)
 
             for parent in self._featured_dirty_rels:
                 if parent in self._featureloc_cache:
