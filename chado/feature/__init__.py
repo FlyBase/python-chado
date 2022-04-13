@@ -548,7 +548,7 @@ class FeatureClient(Client):
 
         # Get possible landmarks
         landmarks = self.session.query(self.model.feature.name, self.model.feature.uniquename, self.model.feature.feature_id, self.model.feature.type_id, self.model.feature.organism_id) \
-            .filter_by(organism_id=organism_id)
+            .filter_by(organism_id=organism_id, is_obsolete=False)
         if landmark_type:
             # Filter by landmark type if provided (else we look for all features)
             landmark_type_id = self.ci.get_cvterm_id(landmark_type, 'SO')
