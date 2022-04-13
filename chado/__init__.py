@@ -54,7 +54,7 @@ class ChadoInstance(object):
             engine_url = 'postgresql://%s:%s@%s:%s/%s' % (self.dbuser, self.dbpass, self.dbhost, self.dbport, self.dbname)
 
         if pool_connections:
-            self._engine = create_engine(engine_url, pool_pre_ping=True, connect_args={
+            self._engine = create_engine(engine_url, pool_pre_ping=True, echo=True, connect_args={
                 "keepalives": 1,
                 "keepalives_idle": 30,
                 "keepalives_interval": 10,
@@ -62,7 +62,7 @@ class ChadoInstance(object):
         else:
             # Prevent SQLAlchemy to make a connection pool.
             # Useful for galaxy dynamic options as otherwise it triggers "sorry, too many clients already" errors after a while
-            self._engine = create_engine(engine_url, poolclass=NullPool)
+            self._engine = create_engine(engine_url, echo=True, poolclass=NullPool)
 
         self._metadata = MetaData(self._engine, schema=self.dbschema)
         Session = sessionmaker(bind=self._engine)
@@ -295,7 +295,7 @@ class ChadoInstance(object):
 
             if allow_synonyms:
                 res = res.join(self.model.cvtermsynonym, self.model.cvtermsynonym.cvterm_id == self.model.cvterm.cvterm_id, isouter=True) \
-                    .filter((self.model.cvterm.name == name) | (self.model.cvtermsynonym.synonym == name))
+                    .filter((self.model.cvterm.name == name) | (self.model.cvtermsynonym.name == name))
             else:
                 res = res.filter(self.model.cvterm.name == name)
 
