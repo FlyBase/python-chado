@@ -1064,8 +1064,8 @@ class FeatureClient(Client):
 
     def _set_feature_parent(self, feat, parent, parent_rel='part_of'):
 
-        partofterm = self.ci.get_cvterm_id('part_of', 'sequence', True)
-        reltypeterm = self.ci.get_cvterm_id(parent_rel, 'sequence', True)
+        partofterm = self.ci.get_cvterm_id('part_of', 'SO', True)
+        reltypeterm = self.ci.get_cvterm_id(parent_rel, 'SO', True)
 
         self._init_featrel_cache()
 
