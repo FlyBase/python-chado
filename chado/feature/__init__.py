@@ -613,6 +613,7 @@ class FeatureClient(Client):
                 else:
                     raise Exception("Could not find landmark named '{}', add --landmark_type to create it".format(seq_id))
             elif len(self._landmark_cache[seq_id]) > 1:
+                print(self._landmark_cache[seq_id]) # debug
                 raise Exception("Found {} landmarks with same name '{}'".format(len(self._landmark_cache[seq_id]), seq_id))
 
         count_ins = 0
