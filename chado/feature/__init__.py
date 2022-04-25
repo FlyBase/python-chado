@@ -547,6 +547,7 @@ class FeatureClient(Client):
         self.cache_existing = not add_only
 
         # Get possible landmarks
+        print('Obtaining possible landmarks.')
         landmarks = self.session.query(self.model.feature.name, self.model.feature.uniquename, self.model.feature.feature_id, self.model.feature.type_id, self.model.feature.organism_id) \
             .filter_by(organism_id=organism_id, is_obsolete=False)
         if landmark_type:
@@ -555,6 +556,7 @@ class FeatureClient(Client):
             landmarks = landmarks.filter(self.model.feature.type_id == landmark_type_id)
 
         self._landmark_cache = {}
+        print('Creating landmark cache.')
         for lm in landmarks:
             if lm.name not in self._landmark_cache:
                 self._landmark_cache[lm.name] = []
@@ -563,20 +565,23 @@ class FeatureClient(Client):
 
             # Also look for uniquename
             if lm.uniquename not in self._landmark_cache:
-                self._landmark_cache[lm.uniquename] = []
+                self._landmark_cache[lm.uniquename] = [] 
             if lm.feature_id not in self._landmark_cache[lm.uniquename]:
                 self._landmark_cache[lm.uniquename].append(lm.feature_id)
 
         # Preload GO terms
+        print('Preloading GO terms.')
         db = 'GO'
         self.ci._preload_dbxref2cvterms(db)
 
+        print('Opening GFF file.')
         examiner = GFF.GFFExaminer()
         gff_handle = open(gff)
         gff_limits = examiner.available_limits(gff_handle)
         gff_handle.close()
 
         # Check that we have all the cvterms in the db
+        print('Checking that we have all the cvterms in the db.')
         self._blacklisted_cvterms = []
         for feat_type in gff_limits['gff_type']:
             type_to_check = feat_type[0]
@@ -595,10 +600,12 @@ class FeatureClient(Client):
         # Read optional fasta file
         self._fasta_sequence_cache = {}
         if fasta:
+            print('Reading fasta file.')
             for record in SeqIO.parse(fasta, "fasta"):
                 self._fasta_sequence_cache[record.id] = str(record.seq)
 
-        # Check that all landmarks are there
+        # Check that all landmarks exist
+        print('Checking that all landmarks exist.')
         for seq_id in gff_limits['gff_id']:
             seq_id = seq_id[0]
             if seq_id not in self._landmark_cache:
@@ -613,7 +620,7 @@ class FeatureClient(Client):
                 else:
                     raise Exception("Could not find landmark named '{}', add --landmark_type to create it".format(seq_id))
             elif len(self._landmark_cache[seq_id]) > 1:
-                print(self._landmark_cache[seq_id]) # debug
+                (self._landmark_cache[seq_id]) # debug
                 raise Exception("Found {} landmarks with same name '{}'".format(len(self._landmark_cache[seq_id]), seq_id))
 
         count_ins = 0
